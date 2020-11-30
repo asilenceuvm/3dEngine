@@ -147,6 +147,11 @@
     <ClCompile Include="engine.cpp" />
     <ClCompile Include="inputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="model.cpp" />
+    <ClCompile Include="resourceManager.cpp" />
+    <ClCompile Include="scene.cpp" />
+    <ClCompile Include="shader.cpp" />
     <ClCompile Include="starter.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,7 +160,16 @@
     <ClInclude Include="engine.h" />
     <ClInclude Include="inputManager.h" />
     <ClInclude Include="logger.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="model.h" />
+    <ClInclude Include="resourceManager.h" />
+    <ClInclude Include="scene.h" />
+    <ClInclude Include="shader.h" />
     <ClInclude Include="starter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\shaders\lighted.frag" />
+    <None Include="res\shaders\lighted.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

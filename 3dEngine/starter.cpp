@@ -6,6 +6,10 @@
 #include "logger.h"
 #include "inputManager.h"
 
+//set up image processor
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 void GLAPIENTRY MessageCallback( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam ) {
 	const GLchar* log = (stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n", (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type, severity, message);
 	if (type == GL_DEBUG_TYPE_ERROR) {
@@ -22,11 +26,16 @@ void Starter::startup(double delta) {
 	display = std::make_unique<Display>(width, height);
 	engine = std::make_unique<Engine>(width, height);
 
+	//set up input
 	InputManager::lastX = static_cast<float>(width / 2);
 	InputManager::lastY = static_cast<float>(height / 2);
 	glfwSetKeyCallback(display->getWindow(), InputManager::key_callback);
 	glfwSetInputMode(display->getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(display->getWindow(), InputManager::mouse_callback);
+
+	//set up debug messages
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(MessageCallback, 0);
 
 	run(delta);
 }
