@@ -70,4 +70,10 @@ void Engine::loadRes() {
 	ResourceManager::getShader("lighted").setVec3("objectColor", 0.8f, 0.8f, 0.8f);
 	ResourceManager::getShader("lighted").setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 	ResourceManager::getShader("lighted").setVec3("lightPos", 0.0f, 1.0f, -3.0f);
+
+
+	ResourceManager::loadShader("res/shaders/skybox.vert", "res/shaders/skybox.frag", nullptr, "skybox");
+	ResourceManager::getShader("skybox").use().setInt("skybox", 0);
+	ResourceManager::getShader("skybox").setMat4("projection", projection);
+
 }

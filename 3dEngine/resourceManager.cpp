@@ -3,6 +3,7 @@
 #include "Logger.h"
 
 std::map<std::string, Shader> ResourceManager::shaders;
+std::map<std::string, Texture> ResourceManager::textures;
 
 Shader ResourceManager::loadShader(const GLchar* vShaderFile, const GLchar* fShaderFile, const GLchar* gShaderFile, std::string name) {
     shaders[name] = loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile);
@@ -13,11 +14,22 @@ Shader ResourceManager::getShader(std::string name) {
     return shaders[name];
 }
 
+Texture ResourceManager::loadTexture(const GLchar* file, GLboolean alpha, std::string name) {
+    textures[name] = loadTextureFromFile(file, alpha);
+    return textures[name];
+}
+
+Texture ResourceManager::getTexture(std::string name) {
+    return textures[name];
+}
 
 void ResourceManager::clear() {
     //delete shader and textures
     for (auto iter : shaders) {
         glDeleteProgram(iter.second.ID);
+    }
+    for (auto iter : textures) {
+        glDeleteTextures(1, &iter.second.ID);
     }
 }
 
@@ -62,5 +74,19 @@ Shader ResourceManager::loadShaderFromFile(const GLchar* vShaderFile, const GLch
     Shader shader;
     shader.compile(vShaderCode, fShaderCode, gShaderFile != nullptr ? gShaderCode : nullptr);
     return shader;
+}
+
+Texture ResourceManager::loadTextureFromFile(const GLchar* file, GLboolean alpha) {
+    Texture texture;
+    if (alpha) {
+        texture.internal_Format = GL_RGBA;
+        texture.image_Format = GL_RGBA;
+    }
+    int width, height;
+    int nrchannels;
+    unsigned char* image = stbi_load(file, &width, &height, &nrchannels, 0);
+    texture.generate(width, height, image);
+    stbi_image_free(image);
+    return texture;
 }
 

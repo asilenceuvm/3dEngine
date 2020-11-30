@@ -10,6 +10,16 @@
 Scene::Scene() {
 	model = std::make_unique<Model>("res/models/backpack/backpack.obj");
 
+	std::vector<std::string> faces {
+        "res/textures/skybox/right.jpg",
+        "res/textures/skybox/left.jpg",
+        "res/textures/skybox/top.jpg",
+        "res/textures/skybox/bottom.jpg",
+        "res/textures/skybox/front.jpg",
+        "res/textures/skybox/back.jpg"
+    };
+	skybox = std::make_unique<SkyBox>(faces);
+
 	//starting values for camera
 	InputManager::xoffset = 0;
 	InputManager::yoffset = 0;
@@ -38,8 +48,13 @@ void Scene::update() {
 	glm::vec3 cameraUp = camera.getCameraUp();
 	glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
+	ResourceManager::getShader("lighted").use();
 	ResourceManager::getShader("lighted").setMat4("view", view);
 	ResourceManager::getShader("lighted").setVec3("viewPos", cameraPos);
+
+	ResourceManager::getShader("skybox").use();
+	view = glm::mat4(glm::mat3(view)); 
+	ResourceManager::getShader("skybox").setMat4("view", view);
 
 	//temp
 	if (InputManager::keys[GLFW_KEY_F]) {
@@ -54,6 +69,12 @@ void Scene::update() {
 void Scene::render() {
 	Shader s = ResourceManager::getShader("lighted");
 	glm::mat4 modelMat = glm::mat4(1.0f);
+	ResourceManager::getShader("lighted").use();
 	ResourceManager::getShader("lighted").setMat4("model", modelMat);
 	model->render(s);
+
+	ResourceManager::getShader("skybox").use();
+	ResourceManager::getShader("skybox").setMat4("model", modelMat);
+	s = ResourceManager::getShader("skybox");
+	skybox->render(s);
 }
