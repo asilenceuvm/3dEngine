@@ -9,6 +9,8 @@ private:
 	int width = 0, height = 0;
 	std::unique_ptr<Scene> curScene;
 
+	void loadRes();
+
 public:
 	Engine(int width, int height);
 	void update();
