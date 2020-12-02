@@ -8,15 +8,16 @@
 #include "inputManager.h"
 
 Scene::Scene() {
-	model = std::make_unique<Model>("res/models/backpack/backpack.obj");
+	model = std::make_unique<Model>("res/models/other/Small_Tropical_Island.obj");
+	model2 = std::make_unique<Model>("res/models/backpack/backpack.obj");
 
 	std::vector<std::string> faces {
-        "res/textures/skybox/right.jpg",
-        "res/textures/skybox/left.jpg",
-        "res/textures/skybox/top.jpg",
-        "res/textures/skybox/bottom.jpg",
-        "res/textures/skybox/front.jpg",
-        "res/textures/skybox/back.jpg"
+        "res/textures/skybox/clouds1_east.bmp",
+        "res/textures/skybox/clouds1_west.bmp",
+        "res/textures/skybox/clouds1_up.bmp",
+        "res/textures/skybox/clouds1_down.bmp",
+        "res/textures/skybox/clouds1_north.bmp",
+        "res/textures/skybox/clouds1_south.bmp"
     };
 	skybox = std::make_unique<SkyBox>(faces);
 
@@ -52,6 +53,7 @@ void Scene::update() {
 	ResourceManager::getShader("lighted").setMat4("view", view);
 	ResourceManager::getShader("lighted").setVec3("viewPos", cameraPos);
 
+
 	ResourceManager::getShader("skybox").use();
 	view = glm::mat4(glm::mat3(view)); 
 	ResourceManager::getShader("skybox").setMat4("view", view);
@@ -69,9 +71,20 @@ void Scene::update() {
 void Scene::render() {
 	Shader s = ResourceManager::getShader("lighted");
 	glm::mat4 modelMat = glm::mat4(1.0f);
+	modelMat = glm::scale(modelMat, glm::vec3(0.03, 0.03, 0.03));
+	modelMat = glm::translate(modelMat, glm::vec3(0, -75, 0));
 	ResourceManager::getShader("lighted").use();
 	ResourceManager::getShader("lighted").setMat4("model", modelMat);
 	model->render(s);
+	modelMat = glm::translate(modelMat, glm::vec3(0, 0, 800));
+	modelMat = glm::translate(modelMat, glm::vec3(0, 0, -90));
+	ResourceManager::getShader("lighted").setMat4("model", modelMat);
+	model->render(s);
+
+	modelMat = glm::mat4(1.0f);
+	modelMat = glm::scale(modelMat, glm::vec3(0.2, 0.2, 0.2));
+	ResourceManager::getShader("lighted").setMat4("model", modelMat);
+	model2->render(s);
 
 	ResourceManager::getShader("skybox").use();
 	ResourceManager::getShader("skybox").setMat4("model", modelMat);

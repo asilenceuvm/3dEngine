@@ -60,9 +60,6 @@
     <ClCompile Include="starter.cpp">
       <Filter>Source Files\engine</Filter>
     </ClCompile>
-    <ClCompile Include="scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="mesh.cpp">
       <Filter>Source Files\gfx</Filter>
     </ClCompile>
@@ -80,6 +77,9 @@
     </ClCompile>
     <ClCompile Include="skybox.cpp">
       <Filter>Source Files\gfx</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>Source Files\engine\scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -101,9 +101,6 @@
     <ClInclude Include="starter.h">
       <Filter>Header Files\engine</Filter>
     </ClInclude>
-    <ClInclude Include="scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="mesh.h">
       <Filter>Header Files\gfx</Filter>
     </ClInclude>
@@ -121,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="skybox.h">
       <Filter>Header Files\gfx</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>Header Files\engine\scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
