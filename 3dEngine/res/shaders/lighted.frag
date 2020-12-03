@@ -69,7 +69,7 @@ void main() {
     vec3 normal = normalize(Normal);
     vec3 lightColor = vec3(0.3);
     // ambient
-    vec3 ambient = 0.3 * color;
+    vec3 ambient = 0.5 * color;
     // diffuse
     vec3 lightDir = normalize(lightPos - FragPos);
     float diff = max(dot(lightDir, normal), 0.0);

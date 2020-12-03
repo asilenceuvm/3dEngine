@@ -33,8 +33,8 @@ void Scene::initRes() {
 	//model = std::make_unique<Model>("res/models/other/Small_Tropical_Island.obj");
 	//model = std::make_unique<Model>("res/models/ruins/ruins.obj");
 	model = std::make_unique<Model>("res/models/pier/woodenpier.obj");
-	//model = std::make_unique<Model>("res/models/rock/rock-07.obj");
-	//model = std::make_unique<Model>("res/models/well/well.obj");
+	//model2 = std::make_unique<Model>("res/models/toher2/apple.obj");
+	model2 = std::make_unique<Model>("res/models/cage/Cage.obj");
 	//model = std::make_unique<Model>("res/models/backpack/backpack.obj");
 
 	std::vector<std::string> faces {
@@ -95,15 +95,6 @@ void Scene::update() {
 	glm::vec3 cameraFront = camera.getCameraFront();
 	glm::vec3 cameraUp = camera.getCameraUp();
 	view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-//
-//	ResourceManager::getShader("lighted").use();
-//	ResourceManager::getShader("lighted").setMat4("view", view);
-//	ResourceManager::getShader("lighted").setVec3("viewPos", cameraPos);
-//
-//
-//	ResourceManager::getShader("skybox").use();
-//	view = glm::mat4(glm::mat3(view)); 
-//	ResourceManager::getShader("skybox").setMat4("view", view);
 
 	//temp
 	if (InputManager::keys[GLFW_KEY_F]) {
@@ -113,9 +104,12 @@ void Scene::update() {
 	if (InputManager::keys[GLFW_KEY_V]) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
+
+
 }
 
 void Scene::render() {
+
 	//first pass
 	lightPos = glm::vec3(sin(glfwGetTime()), 3, 2);
 	glm::mat4 lightProjection, lightView;
@@ -157,39 +151,26 @@ void Scene::render() {
 	s = ResourceManager::getShader("lighted");
 	renderScene(s);
 
-}
+	}
 
 void Scene::renderScene(Shader& shader) {
-	//glm::mat4 modelMat = glm::mat4(1.0f);
-	//modelMat = glm::scale(modelMat, glm::vec3(0.03, 0.03, 0.03));
-	//modelMat = glm::translate(modelMat, glm::vec3(0, -75, 0));
-	//shader.use();
-	//shader.setMat4("model", modelMat);
-	//model->render(shader);
-	//modelMat = glm::translate(modelMat, glm::vec3(0, 0, 800));
-	//modelMat = glm::translate(modelMat, glm::vec3(0, 0, -90));
-	//shader.setMat4("model", modelMat);
-	//model->render(shader);
-
-	//glm::mat4 modelMat = glm::mat4(1.0f);
-	//modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 0.5));
-	//shader.setMat4("model", modelMat);
-	//model2->render(shader);
-
-	//modelMat = glm::translate(modelMat, glm::vec3(0, 10, 0));
-	//shader.setMat4("model", modelMat);
-	//model2->render(shader);
-
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 0.5));
-	//modelMat = glm::translate(modelMat, glm::vec3(0, -75, 0));
 	shader.use();
 	shader.setMat4("model", modelMat);
 	model->render(shader);
 
+	modelMat = glm::translate(modelMat, glm::vec3(1, 2.45, 0));
+	modelMat = glm::scale(modelMat, glm::vec3(0.02, 0.02, 0.02));
+	modelMat = glm::rotate(modelMat, glm::radians(90.0f), glm::vec3(-1, 0, 0));
+	shader.setMat4("model", modelMat);
+	model2->render(shader);
+
 	ResourceManager::getShader("skybox").use();
 	modelMat = glm::mat4(1.0f);
 	ResourceManager::getShader("skybox").setMat4("model", modelMat);
+	ResourceManager::getShader("skybox").setMat4("view", glm::mat4(glm::mat3(view)));
 	Shader s = ResourceManager::getShader("skybox");
 	skybox->render(s);
+
 }
