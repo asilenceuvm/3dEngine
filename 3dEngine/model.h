@@ -44,7 +44,7 @@ public:
     Model(std::string const& path, bool gamma = false);
 
     // draws the model
-    void render(Shader& shader);
+    void render(Shader& shader, glm::vec3 pos, glm::vec3 scale, glm::vec3 rotate);
 };
 
 

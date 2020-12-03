@@ -5,20 +5,22 @@
 #include "model.h"
 #include "camera.h"
 #include "skybox.h"
+#include "shadowRenderer.h"
 
 class Scene {
 private:
 	//temp
 	std::unique_ptr<Model> model;
 	std::unique_ptr<Model> model2;
+
 	std::unique_ptr<SkyBox> skybox;
+	std::unique_ptr<ShadowRenderer> shadowRenderer;
 	glm::vec3 lightPos;
 	glm::mat4 view;
-	const unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
-	unsigned int depthMapFBO;
-	unsigned int depthMap;
 
 	Camera camera;
+
+	int width, height;
 
 	//load values specific to the scene
 	void initRes();
@@ -26,7 +28,7 @@ private:
 	//helper method to draw scene
 	void renderScene(Shader& shader);
 public:
-	Scene();
+	Scene(int width, int height);
 	void update();
 	void render();
 };

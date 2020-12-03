@@ -17,6 +17,6 @@ private:
 public:
 	SkyBox(std::vector<std::string> faces);
 
-	void render(Shader& shader);
+	void render(Shader& shader, glm::mat4 view);
 };
 

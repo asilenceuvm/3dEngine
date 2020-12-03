@@ -30,12 +30,8 @@ void Scene::initRes() {
 	ResourceManager::getShader("lighted").setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 	ResourceManager::getShader("lighted").setVec3("lightPos", 0.0f, 1.0f, -3.0f);
 
-	//model = std::make_unique<Model>("res/models/other/Small_Tropical_Island.obj");
-	//model = std::make_unique<Model>("res/models/ruins/ruins.obj");
 	model = std::make_unique<Model>("res/models/pier/woodenpier.obj");
-	//model2 = std::make_unique<Model>("res/models/toher2/apple.obj");
 	model2 = std::make_unique<Model>("res/models/cage/Cage.obj");
-	//model = std::make_unique<Model>("res/models/backpack/backpack.obj");
 
 	std::vector<std::string> faces {
         "res/textures/skybox/clouds1_east.bmp",
@@ -47,26 +43,14 @@ void Scene::initRes() {
     };
 	skybox = std::make_unique<SkyBox>(faces);
 
-
-	glGenFramebuffers(1, &depthMapFBO);  
-	glGenTextures(1, &depthMap);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 
-				 SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);  
+	shadowRenderer = std::make_unique<ShadowRenderer>();
 }
 
-Scene::Scene() {
+Scene::Scene(int width, int height) {
 	initRes();
+
+	this->width = width;
+	this->height = height;
 
 	//starting values for camera
 	InputManager::xoffset = 0;
@@ -109,68 +93,39 @@ void Scene::update() {
 }
 
 void Scene::render() {
-
 	//first pass
 	lightPos = glm::vec3(sin(glfwGetTime()), 3, 2);
-	glm::mat4 lightProjection, lightView;
-	glm::mat4 lightSpaceMatrix;
-	float near_plane = 1.0f, far_plane = 7.5f;
-	lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-	lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-	lightSpaceMatrix = lightProjection * lightView;
 
-	ResourceManager::getShader("shadow").use();
-	ResourceManager::getShader("shadow").setMat4("lightSpaceMatrix", lightSpaceMatrix);
 	Shader s = ResourceManager::getShader("shadow");
+	shadowRenderer->render(s, lightPos);
+	renderScene(s);
 
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-		glClear(GL_DEPTH_BUFFER_BIT);
-		glActiveTexture(GL_TEXTURE0);
-		renderScene(s);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// reset viewport
-	glViewport(0, 0, 800, 600);
+	//second pass
+	glViewport(0, 0, width, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//second pass
-	glViewport(0, 0, 800, 600);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	ResourceManager::getShader("lighted").use();
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 	ResourceManager::getShader("lighted").setMat4("projection", projection);
 	ResourceManager::getShader("lighted").setMat4("view", view);
 	// set light uniforms
 	ResourceManager::getShader("lighted").setVec3("viewPos", camera.getCameraPos());
 	ResourceManager::getShader("lighted").setVec3("lightPos", lightPos);
-	ResourceManager::getShader("lighted").setMat4("lightSpaceMatrix", lightSpaceMatrix);
+	ResourceManager::getShader("lighted").setMat4("lightSpaceMatrix", shadowRenderer->getLightSpaceMatrix());
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glBindTexture(GL_TEXTURE_2D, shadowRenderer->getDepthMap());
 
 	s = ResourceManager::getShader("lighted");
 	renderScene(s);
 
-	}
+	//draw skybox
+	s = ResourceManager::getShader("skybox");
+	skybox->render(s, view);
+}
 
 void Scene::renderScene(Shader& shader) {
-	glm::mat4 modelMat = glm::mat4(1.0f);
-	modelMat = glm::scale(modelMat, glm::vec3(0.5, 0.5, 0.5));
-	shader.use();
-	shader.setMat4("model", modelMat);
-	model->render(shader);
-
-	modelMat = glm::translate(modelMat, glm::vec3(1, 2.45, 0));
-	modelMat = glm::scale(modelMat, glm::vec3(0.02, 0.02, 0.02));
-	modelMat = glm::rotate(modelMat, glm::radians(90.0f), glm::vec3(-1, 0, 0));
-	shader.setMat4("model", modelMat);
-	model2->render(shader);
-
-	ResourceManager::getShader("skybox").use();
-	modelMat = glm::mat4(1.0f);
-	ResourceManager::getShader("skybox").setMat4("model", modelMat);
-	ResourceManager::getShader("skybox").setMat4("view", glm::mat4(glm::mat3(view)));
-	Shader s = ResourceManager::getShader("skybox");
-	skybox->render(s);
-
+	model->render(shader, glm::vec3(0,0,0), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0, 0, 0));
+	model2->render(shader, glm::vec3(0.5, 1.2, 0), glm::vec3(0.01, 0.01, 0.01), glm::vec3(-1, 0, 0));
 }

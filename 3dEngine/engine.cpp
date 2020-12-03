@@ -31,7 +31,7 @@ Engine::Engine(int width, int height) {
 
 	loadRes();
 
-	curScene = std::make_unique<Scene>();
+	curScene = std::make_unique<Scene>(width, height);
 }
 
 void Engine::update() {

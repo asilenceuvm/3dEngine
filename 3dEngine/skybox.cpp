@@ -93,12 +93,19 @@ unsigned int SkyBox::loadCubemap(std::vector<std::string> faces) {
     return textureID;
 };
 
-void SkyBox::render(Shader& shader) {
+void SkyBox::render(Shader& shader, glm::mat4 view) {
 	glDepthFunc(GL_LEQUAL);  
 	shader.use();
 
 	glBindVertexArray(skyboxVAO);
 	glActiveTexture(GL_TEXTURE0);
+
+
+	shader.use();
+	glm::mat4 modelMat = glm::mat4(1.0f);
+	shader.setMat4("model", modelMat);
+	shader.setMat4("view", glm::mat4(glm::mat3(view)));
+
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 

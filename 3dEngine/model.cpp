@@ -5,7 +5,18 @@ Model::Model(std::string const &path, bool gamma) : gammaCorrection(gamma) {
 	loadModel(path);
 }
 
-void Model::render(Shader &shader) {
+void Model::render(Shader& shader, glm::vec3 pos, glm::vec3 scale, glm::vec3 rotate) {
+	//apply transformations
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, pos);  
+	if (rotate != glm::vec3(0)) {
+		model = glm::rotate(model, glm::radians(90.0f), rotate);
+	}
+    model = glm::scale(model, scale); 
+	shader.use();
+	shader.setMat4("model", model);
+
+	//render vertices
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		meshes[i].render(shader);
 	}

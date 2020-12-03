@@ -81,6 +81,9 @@
     <ClCompile Include="scene.cpp">
       <Filter>Source Files\engine\scene</Filter>
     </ClCompile>
+    <ClCompile Include="shadowRenderer.cpp">
+      <Filter>Source Files\gfx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="display.h">
@@ -121,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="scene.h">
       <Filter>Header Files\engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="shadowRenderer.h">
+      <Filter>Header Files\gfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
