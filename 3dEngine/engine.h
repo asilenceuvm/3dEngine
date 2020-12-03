@@ -9,6 +9,7 @@ private:
 	int width = 0, height = 0;
 	std::unique_ptr<Scene> curScene;
 
+	//load global assets
 	void loadRes();
 
 public:

@@ -49,31 +49,14 @@ void Engine::loadRes() {
 	
 	ResourceManager::getShader("lighted").use().setInt("image", 0);
 	ResourceManager::getShader("lighted").setMat4("projection", projection);
-
-	ResourceManager::getShader("lighted").setInt("material.diffuse", 0);
-	ResourceManager::getShader("lighted").setInt("material.specular", 1);
-	ResourceManager::getShader("lighted").setFloat("material.shine", 256.0f);
-	
-	ResourceManager::getShader("lighted").setVec3("dirLight.direction", 0.0f, -0.0f, -1.0f);
-	ResourceManager::getShader("lighted").setVec3("dirLight.ambient", 0.7f, 0.7f, 0.7f);
-	ResourceManager::getShader("lighted").setVec3("dirLight.diffuse", 0.5f, 0.5f, 0.5f);
-	ResourceManager::getShader("lighted").setVec3("dirLight.specular", 0.3f, 0.3f, 0.3f);
-
-	ResourceManager::getShader("lighted").setVec3("pointLight.position", 0.0f, 1.0f, -200.0f);
-	ResourceManager::getShader("lighted").setFloat("pointLight.constant", 1.0f);
-	ResourceManager::getShader("lighted").setFloat("pointLight.linear", 0.09f);
-	ResourceManager::getShader("lighted").setFloat("pointLight.quadratic", 0.032f);
-	ResourceManager::getShader("lighted").setVec3("pointLight.ambient", 0.2f, 0.2f, 0.2f);
-	ResourceManager::getShader("lighted").setVec3("pointLight.diffuse", 0.5f, 0.5f, 0.5f);
-	ResourceManager::getShader("lighted").setVec3("pointLight.specular", 1.0f, 1.0f, 1.0f);
-
-	ResourceManager::getShader("lighted").setVec3("objectColor", 0.8f, 0.8f, 0.8f);
-	ResourceManager::getShader("lighted").setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-	ResourceManager::getShader("lighted").setVec3("lightPos", 0.0f, 1.0f, -3.0f);
+	ResourceManager::getShader("lighted").setInt("diffuseTexture", 0);
+    ResourceManager::getShader("lighted").setInt("shadowMap", 1);
 
 
 	ResourceManager::loadShader("res/shaders/skybox.vert", "res/shaders/skybox.frag", nullptr, "skybox");
 	ResourceManager::getShader("skybox").use().setInt("skybox", 0);
 	ResourceManager::getShader("skybox").setMat4("projection", projection);
+
+	ResourceManager::loadShader("res/shaders/shadow.vert", "res/shaders/shadow.frag", nullptr, "shadow");
 
 }
