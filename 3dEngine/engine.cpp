@@ -1,6 +1,34 @@
 #include "engine.h"
 
+#include "python38/Python.h"
+
 #include "resourceManager.h"
+#include "starter.h"
+#include <thread>
+
+
+void runPython() {
+	std::cout << "Python Terminal: " << std::endl;
+	bool shouldclose = false;
+	bool reload = false;
+	//while (shouldclose == false) {
+		//PyImport_AppendInittab("arnav", &PyInit_arnav);
+
+		Py_Initialize();
+		//std::string input;
+		//while (true) {
+		//	std::cout << ">> ";
+		//	std::cin >> input;
+		//	std::cout << input << std::endl;
+		//	PyRun_SimpleString(input.c_str());
+		//}
+		std::string s;
+		while (std::getline(std::cin, s) && (reload == false)) {
+			PyRun_SimpleString(s.c_str());
+		}
+		Py_Finalize();
+	//}
+}
 
 Engine::Engine(int width, int height) {
 	this->width = width;
@@ -32,6 +60,8 @@ Engine::Engine(int width, int height) {
 	loadRes();
 
 	curScene = std::make_unique<Scene>(width, height);
+
+	std::thread (runPython).detach();
 }
 
 void Engine::update() {
@@ -58,5 +88,4 @@ void Engine::loadRes() {
 	ResourceManager::getShader("skybox").setMat4("projection", projection);
 
 	ResourceManager::loadShader("res/shaders/shadow.vert", "res/shaders/shadow.frag", nullptr, "shadow");
-
 }

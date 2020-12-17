@@ -10,6 +10,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+
 void GLAPIENTRY MessageCallback( GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam ) {
 	const GLchar* log = (stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n", (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type, severity, message);
 	if (type == GL_DEBUG_TYPE_ERROR) {
@@ -17,6 +18,38 @@ void GLAPIENTRY MessageCallback( GLenum source, GLenum type, GLuint id, GLenum s
 	}
 	else {
 		Logger::logWarning("OPENGL", log, false);
+	}
+}
+
+void Starter::run(double delta) {
+	double lastTime = glfwGetTime(), timer = lastTime;
+	double deltaTime = 0, nowTime = 0;
+	int frames = 0, updates = 0;
+
+	//enter loop
+	while (!glfwWindowShouldClose(display->getWindow())) {
+
+		//get time
+		nowTime = glfwGetTime();
+		deltaTime += (nowTime - lastTime) / delta;
+		lastTime = nowTime;
+
+		//update at delta
+		while (deltaTime >= 1.0) {
+			update();
+			updates++;
+			deltaTime--;
+		}
+
+		render();
+		frames++;
+
+		//reset and output fps
+		if (glfwGetTime() - timer > 1.0) {
+			timer++;
+			//std::cout << "FPS: " << frames << " Updates:" << updates << std::endl;
+			updates = 0, frames = 0;
+		}
 	}
 }
 
@@ -61,34 +94,3 @@ void Starter::render() {
 	glfwPollEvents();
 }
 
-void Starter::run(double delta) {
-	double lastTime = glfwGetTime(), timer = lastTime;
-	double deltaTime = 0, nowTime = 0;
-	int frames = 0, updates = 0;
-
-	//enter loop
-	while (!glfwWindowShouldClose(display->getWindow())) {
-
-		//get time
-		nowTime = glfwGetTime();
-		deltaTime += (nowTime - lastTime) / delta;
-		lastTime = nowTime;
-
-		//update at delta
-		while (deltaTime >= 1.0) {
-			update();
-			updates++;
-			deltaTime--;
-		}
-
-		render();
-		frames++;
-
-		//reset and output fps
-		if (glfwGetTime() - timer > 1.0) {
-			timer++;
-			//std::cout << "FPS: " << frames << " Updates:" << updates << std::endl;
-			updates = 0, frames = 0;
-		}
-	}
-}

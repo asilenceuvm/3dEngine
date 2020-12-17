@@ -15,7 +15,6 @@ private:
 
 	std::unique_ptr<SkyBox> skybox;
 	std::unique_ptr<ShadowRenderer> shadowRenderer;
-	glm::vec3 lightPos;
 	glm::mat4 view;
 
 	Camera camera;
@@ -31,5 +30,7 @@ public:
 	Scene(int width, int height);
 	void update();
 	void render();
+
+	static glm::vec3 lightPos;
 };
 

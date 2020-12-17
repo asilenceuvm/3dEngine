@@ -3,12 +3,14 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "python38/Python.h"
 
 #include "resourceManager.h"
 #include "inputManager.h"
 
+glm::vec3 Scene::lightPos = glm::vec3(-2.0f, 4.0f, -1.0f);
+
 void Scene::initRes() {
-	lightPos = glm::vec3(-2.0f, 4.0f, -1.0f);
 	ResourceManager::getShader("lighted").setInt("material.diffuse", 0);
 	ResourceManager::getShader("lighted").setInt("material.specular", 1);
 	ResourceManager::getShader("lighted").setFloat("material.shine", 256.0f);
@@ -31,7 +33,7 @@ void Scene::initRes() {
 	ResourceManager::getShader("lighted").setVec3("lightPos", 0.0f, 1.0f, -3.0f);
 
 	model = std::make_unique<Model>("res/models/pier/woodenpier.obj");
-	model2 = std::make_unique<Model>("res/models/cage/Cage.obj");
+	//model2 = std::make_unique<Model>("res/models/cage/Cage.obj");
 
 	std::vector<std::string> faces {
         "res/textures/skybox/clouds1_east.bmp",
@@ -46,6 +48,30 @@ void Scene::initRes() {
 	shadowRenderer = std::make_unique<ShadowRenderer>();
 }
 
+static PyObject* engine_move(PyObject* self, PyObject* args) {
+	float x, y, z;
+	if(PyArg_ParseTuple(args, "fff", &x, &y, &z)) {
+		Scene::lightPos = glm::vec3(x, y, z);
+	}
+
+	return PyLong_FromLong(0);
+}
+
+
+static struct PyMethodDef methods[] = {
+	{ "move", engine_move, METH_VARARGS, "move light source"},
+	{ NULL, NULL, 0, NULL }
+};
+
+static struct PyModuleDef modDef = {
+	PyModuleDef_HEAD_INIT, "engine", NULL, -1, methods, 
+	NULL, NULL, NULL, NULL
+};
+
+static PyObject* PyInit_engine(void) {
+	return PyModule_Create(&modDef);
+}
+
 Scene::Scene(int width, int height) {
 	initRes();
 
@@ -56,6 +82,8 @@ Scene::Scene(int width, int height) {
 	InputManager::xoffset = 0;
 	InputManager::yoffset = 0;
 	camera.rotateCamera(-90, 0, 1);
+
+	PyImport_AppendInittab("engine", &PyInit_engine);
 }
 
 void Scene::update() {
@@ -94,7 +122,7 @@ void Scene::update() {
 
 void Scene::render() {
 	//first pass
-	lightPos = glm::vec3(sin(glfwGetTime()), 3, 2);
+	//lightPos = glm::vec3(sin(glfwGetTime()), 3, 2);
 
 	Shader s = ResourceManager::getShader("shadow");
 	shadowRenderer->render(s, lightPos);
@@ -106,14 +134,15 @@ void Scene::render() {
 	glViewport(0, 0, width, height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	ResourceManager::getShader("lighted").use();
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+
+	ResourceManager::getShader("lighted").use();
 	ResourceManager::getShader("lighted").setMat4("projection", projection);
 	ResourceManager::getShader("lighted").setMat4("view", view);
-	// set light uniforms
 	ResourceManager::getShader("lighted").setVec3("viewPos", camera.getCameraPos());
 	ResourceManager::getShader("lighted").setVec3("lightPos", lightPos);
 	ResourceManager::getShader("lighted").setMat4("lightSpaceMatrix", shadowRenderer->getLightSpaceMatrix());
+
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, shadowRenderer->getDepthMap());
 
@@ -127,5 +156,6 @@ void Scene::render() {
 
 void Scene::renderScene(Shader& shader) {
 	model->render(shader, glm::vec3(0,0,0), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0, 0, 0));
-	model2->render(shader, glm::vec3(0.5, 1.2, 0), glm::vec3(0.01, 0.01, 0.01), glm::vec3(-1, 0, 0));
+	//model2->render(shader, glm::vec3(0.5, 1.2, 0), glm::vec3(0.01), glm::vec3(-1, 0, 0));
 }
+

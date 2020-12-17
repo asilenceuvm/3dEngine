@@ -19,7 +19,7 @@ Display::Display(int width, int height) {
 	}
 
 	glfwMakeContextCurrent(window);
-	glViewport(0, 0, 800, 600);
+	glViewport(0, 0, width, height);
 }
 
 Display::~Display() {

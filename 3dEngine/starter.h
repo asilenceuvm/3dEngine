@@ -2,8 +2,12 @@
 
 #include <memory>
 
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
+
 #include "display.h"
 #include "engine.h"
+
 
 class Starter {
 private:

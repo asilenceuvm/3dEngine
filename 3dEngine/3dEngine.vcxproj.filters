@@ -148,5 +148,17 @@
     <None Include="res\shaders\shadow.vert">
       <Filter>Source Files\shaders</Filter>
     </None>
+    <None Include="res\shaders\light.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="res\shaders\light.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="..\other.py">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="other2.py">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
