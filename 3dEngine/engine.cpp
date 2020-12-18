@@ -23,8 +23,10 @@ void runPython() {
 		//	PyRun_SimpleString(input.c_str());
 		//}
 		std::string s;
+		std::cout << ">> ";
 		while (std::getline(std::cin, s) && (reload == false)) {
 			PyRun_SimpleString(s.c_str());
+			std::cout << ">> ";
 		}
 		Py_Finalize();
 	//}

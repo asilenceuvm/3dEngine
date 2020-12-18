@@ -6,13 +6,10 @@
 #include "camera.h"
 #include "skybox.h"
 #include "shadowRenderer.h"
+#include "gameObject.h"
 
 class Scene {
 private:
-	//temp
-	std::unique_ptr<Model> model;
-	std::unique_ptr<Model> model2;
-
 	std::unique_ptr<SkyBox> skybox;
 	std::unique_ptr<ShadowRenderer> shadowRenderer;
 	glm::mat4 view;
@@ -32,5 +29,7 @@ public:
 	void render();
 
 	static glm::vec3 lightPos;
+	static std::map<std::string, std::shared_ptr<Model>> models;
+	static std::map<std::string, GameObject> gameObjects;
 };
 

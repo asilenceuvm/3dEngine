@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="shadowRenderer.cpp" />
     <ClCompile Include="skybox.cpp" />
     <ClCompile Include="display.cpp" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="gameObject.h" />
     <ClInclude Include="shadowRenderer.h" />
     <ClInclude Include="skybox.h" />
     <ClInclude Include="display.h" />

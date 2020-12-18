@@ -9,6 +9,8 @@
 #include "inputManager.h"
 
 glm::vec3 Scene::lightPos = glm::vec3(-2.0f, 4.0f, -1.0f);
+std::map<std::string, std::shared_ptr<Model>> Scene::models;
+std::map<std::string, GameObject> Scene::gameObjects;
 
 void Scene::initRes() {
 	ResourceManager::getShader("lighted").setInt("material.diffuse", 0);
@@ -32,7 +34,11 @@ void Scene::initRes() {
 	ResourceManager::getShader("lighted").setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 	ResourceManager::getShader("lighted").setVec3("lightPos", 0.0f, 1.0f, -3.0f);
 
-	model = std::make_unique<Model>("res/models/pier/woodenpier.obj");
+	auto model = std::make_shared<Model>("res/models/pier/woodenpier.obj");
+	models.insert({"pier", model });
+
+	GameObject go(models.find("pier")->second);
+	gameObjects.insert({ "pier", go });
 	//model2 = std::make_unique<Model>("res/models/cage/Cage.obj");
 
 	std::vector<std::string> faces {
@@ -57,9 +63,19 @@ static PyObject* engine_move(PyObject* self, PyObject* args) {
 	return PyLong_FromLong(0);
 }
 
+static PyObject* engine_add_game_object(PyObject* self, PyObject* args) {
+	char* name;
+	char* modelname;
+	if(PyArg_ParseTuple(args, "ss", &name, &modelname)) {
+		Scene::gameObjects.insert({name, Scene::models.find(modelname)->second});
+	}
+
+	return PyLong_FromLong(0);
+}
 
 static struct PyMethodDef methods[] = {
 	{ "move", engine_move, METH_VARARGS, "move light source"},
+	{ "add_game_object", engine_add_game_object, METH_VARARGS, "add game object to scene"},
 	{ NULL, NULL, 0, NULL }
 };
 
@@ -155,7 +171,12 @@ void Scene::render() {
 }
 
 void Scene::renderScene(Shader& shader) {
-	model->render(shader, glm::vec3(0,0,0), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0, 0, 0));
+	//model->render(shader, glm::vec3(0,0,0), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0, 0, 0));
+	//models[0]->render(shader, glm::vec3(0, 0, 0), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0, 0, 0));
 	//model2->render(shader, glm::vec3(0.5, 1.2, 0), glm::vec3(0.01), glm::vec3(-1, 0, 0));
+	for (auto& x : gameObjects) {
+		x.second.render(shader);
+
+	}
 }
 
