@@ -73,9 +73,42 @@ static PyObject* engine_add_game_object(PyObject* self, PyObject* args) {
 	return PyLong_FromLong(0);
 }
 
+static PyObject* engine_move_game_object(PyObject* self, PyObject* args) {
+	char* name;
+	float x, y, z;
+	if(PyArg_ParseTuple(args, "sfff", &name, &x, &y, &z)) {
+		Scene::gameObjects.find(name)->second.setPos(glm::vec3(x, y, z));
+	}
+
+	return PyLong_FromLong(0);
+}
+
+static PyObject* engine_rotate_game_object(PyObject* self, PyObject* args) {
+	char* name;
+	float x, y, z;
+	if(PyArg_ParseTuple(args, "sfff", &name, &x, &y, &z)) {
+		Scene::gameObjects.find(name)->second.setRotate(glm::vec3(x, y, z));
+	}
+
+	return PyLong_FromLong(0);
+}
+
+static PyObject* engine_scale_game_object(PyObject* self, PyObject* args) {
+	char* name;
+	float x, y, z;
+	if(PyArg_ParseTuple(args, "sfff", &name, &x, &y, &z)) {
+		Scene::gameObjects.find(name)->second.setScale(glm::vec3(x, y, z));
+	}
+
+	return PyLong_FromLong(0);
+}
+
 static struct PyMethodDef methods[] = {
 	{ "move", engine_move, METH_VARARGS, "move light source"},
 	{ "add_game_object", engine_add_game_object, METH_VARARGS, "add game object to scene"},
+	{ "move_game_object", engine_move_game_object, METH_VARARGS, "move gameobject"},
+	{ "rotate_game_object", engine_rotate_game_object, METH_VARARGS, "rotate gameobject"},
+	{ "scale_game_object", engine_scale_game_object, METH_VARARGS, "scale gameobject"},
 	{ NULL, NULL, 0, NULL }
 };
 

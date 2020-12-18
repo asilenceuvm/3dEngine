@@ -9,9 +9,17 @@ void Model::render(Shader& shader, glm::vec3 pos, glm::vec3 scale, glm::vec3 rot
 	//apply transformations
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, pos);  
-	if (rotate != glm::vec3(0)) {
-		model = glm::rotate(model, glm::radians(90.0f), rotate);
+
+	if (rotate.x != 0) {
+		model = glm::rotate(model, glm::radians(rotate.x), glm::vec3(rotate.x, 0, 0));
 	}
+	if (rotate.y != 0) {
+		model = glm::rotate(model, glm::radians(rotate.y), glm::vec3(0, rotate.y, 0));
+	}
+	if (rotate.z != 0) {
+		model = glm::rotate(model, glm::radians(rotate.z), glm::vec3(0, 0, rotate.z));
+	}
+
     model = glm::scale(model, scale); 
 	shader.use();
 	shader.setMat4("model", model);
